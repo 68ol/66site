@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>홍색기록 — 북경 1966</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700;900&family=Noto+Serif+KR:wght@300;400;600;700;900&family=Ma+Shan+Zheng&display=swap');
+:root{--red:#c0212c;--red-dark:#8b1318;--ink:#1a1008;--paper:#f0e8d8;--paper-dark:#e0d4bc;--paper-aged:#c8b898;--gray:#6b5d4f;--gray-light:#8a7a6a}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--ink);font-family:'Noto Serif KR','Noto Serif SC',Georgia,serif;overflow-x:hidden}
+
+/* BGM */
+#bgm-player{position:fixed;bottom:1.5rem;right:1.5rem;z-index:900;display:none;align-items:center;gap:.6rem}
+#bgm-player.visible{display:flex}
+.bgm-btn{width:36px;height:36px;border-radius:50%;background:rgba(26,16,8,.85);border:1px solid rgba(192,33,44,.4);color:var(--paper-aged);font-size:.75rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;backdrop-filter:blur(4px)}
+.bgm-btn:hover{border-color:var(--red);color:var(--paper)}
+.bgm-label{font-size:.55rem;color:rgba(240,232,216,.45);letter-spacing:.15em;background:rgba(26,16,8,.75);padding:.25rem .5rem;backdrop-filter:blur(4px);white-space:nowrap}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:1000;transition:opacity .8s ease,visibility .8s ease}
+#splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.splash-star{color:var(--red);font-size:4rem;animation:pulse-star 2s ease-in-out infinite;margin-bottom:2rem}
+@keyframes pulse-star{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+.splash-title{color:var(--red);font-size:clamp(1.8rem,5vw,3rem);font-weight:900;letter-spacing:.3em;text-align:center;margin-bottom:.5rem}
+.splash-sub{color:var(--paper-aged);font-size:.85rem;letter-spacing:.2em;text-align:center;margin-bottom:3rem}
+.splash-divider{width:120px;height:1px;background:var(--red);margin:0 auto 2rem}
+.splash-notice{color:var(--gray-light);font-size:.75rem;letter-spacing:.15em;text-align:center;line-height:2}
+.splash-btn{margin-top:2.5rem;padding:.8rem 3rem;background:transparent;border:1px solid var(--red);color:var(--red);font-family:'Noto Serif KR',serif;font-size:.85rem;letter-spacing:.25em;cursor:pointer;transition:all .3s}
+.splash-btn:hover{background:var(--red);color:var(--paper)}
+
+/* MAIN */
+#main{display:none}
+#main.visible{display:block}
+
+/* LANDING */
+#landing{min-height:100vh;background:var(--paper);background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(139,19,24,.04) 28px,rgba(139,19,24,.04) 29px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;position:relative;overflow:hidden}
+.landing-corner{position:absolute;font-size:.65rem;color:var(--red);letter-spacing:.1em;opacity:.6}
+.landing-corner.tl{top:2rem;left:2.5rem}
+.landing-corner.tr{top:2rem;right:2.5rem;text-align:right}
+.landing-corner.bl{bottom:2rem;left:2.5rem}
+.landing-corner.br{bottom:2rem;right:2.5rem;text-align:right}
+.landing-emblem{font-size:3.5rem;color:var(--red);margin-bottom:1.5rem;animation:spin-slow 20s linear infinite}
+@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.landing-header{text-align:center;margin-bottom:3rem}
+.landing-zh{font-family:'Ma Shan Zheng','Noto Serif SC',serif;font-size:clamp(2.5rem,7vw,5rem);color:var(--red-dark);letter-spacing:.1em;line-height:1.1;margin-bottom:.5rem}
+.landing-ko{font-size:clamp(.9rem,2vw,1.1rem);color:var(--gray);letter-spacing:.35em;margin-bottom:.3rem}
+.landing-year{font-size:1rem;color:var(--red);letter-spacing:.5em;font-weight:300}
+.landing-rule{width:min(500px,80vw);height:2px;background:linear-gradient(to right,transparent,var(--red),var(--red-dark),var(--red),transparent);margin:0 auto 1.5rem}
+.landing-rule-thin{width:min(300px,60vw);height:1px;background:linear-gradient(to right,transparent,var(--red-dark),transparent);margin:0 auto 2.5rem}
+.landing-quote{text-align:center;color:var(--gray);font-size:.8rem;letter-spacing:.15em;line-height:2;margin-bottom:3rem;font-style:italic}
+.landing-nav{display:flex;flex-direction:column;gap:.8rem;align-items:center;width:100%;max-width:360px}
+.landing-nav-item{width:100%;padding:1rem 2rem;background:transparent;border:none;cursor:pointer;text-align:left;display:flex;align-items:center;gap:1.2rem;border-bottom:1px solid var(--paper-aged);transition:all .3s;font-family:'Noto Serif KR',serif}
+.landing-nav-item:hover{border-bottom-color:var(--red);padding-left:2.5rem}
+.nav-symbol{color:var(--red);font-size:1.2rem;flex-shrink:0}
+.nav-text{flex:1}
+.nav-zh{display:block;font-size:.7rem;color:var(--gray-light);letter-spacing:.2em;margin-bottom:.2rem}
+.nav-ko{display:block;font-size:.95rem;color:var(--ink);font-weight:600;letter-spacing:.08em}
+.nav-arrow{color:var(--red);opacity:0;transition:opacity .3s}
+.landing-nav-item:hover .nav-arrow{opacity:1}
+
+/* SECTIONS */
+.section{display:none;min-height:100vh;background:var(--paper)}
+.section.active{display:block}
+.section-header{background:var(--red-dark);padding:3rem 2rem 2rem;position:relative;overflow:hidden}
+.section-header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(0,0,0,.04) 20px,rgba(0,0,0,.04) 21px)}
+.section-header-inner{max-width:800px;margin:0 auto;position:relative}
+.back-btn{background:none;border:none;color:rgba(240,232,216,.6);font-family:'Noto Serif KR',serif;font-size:.75rem;letter-spacing:.2em;cursor:pointer;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;transition:color .2s}
+.back-btn:hover{color:var(--paper)}
+.section-title-zh{font-family:'Ma Shan Zheng','Noto Serif SC',serif;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--paper);letter-spacing:.05em;margin-bottom:.3rem}
+.section-title-ko{font-size:.8rem;color:rgba(240,232,216,.65);letter-spacing:.3em}
+.section-tag{position:absolute;right:0;top:0;font-size:.6rem;color:rgba(240,232,216,.4);letter-spacing:.15em;text-align:right}
+
+/* HISTORY */
+.history-body{max-width:800px;margin:0 auto;padding:3rem 2rem}
+.history-intro{border-left:3px solid var(--red);padding:1.2rem 1.5rem;background:rgba(192,33,44,.04);margin-bottom:3rem}
+.history-intro p{font-size:.85rem;color:var(--gray);line-height:2;letter-spacing:.05em}
+.history-entry{margin-bottom:3.5rem;animation:fade-in .5s ease}
+@keyframes fade-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.history-year-label{font-size:.7rem;color:var(--red);letter-spacing:.3em;margin-bottom:.5rem}
+.history-entry h2{font-size:clamp(1.1rem,2.5vw,1.5rem);color:var(--red-dark);font-weight:700;letter-spacing:.05em;margin-bottom:.3rem;line-height:1.3}
+.history-entry h3{font-size:.8rem;color:var(--gray);font-weight:400;letter-spacing:.15em;margin-bottom:1.2rem;font-style:italic}
+.history-entry p{font-size:.9rem;line-height:2.1;color:var(--ink);letter-spacing:.03em}
+.history-entry p+p{margin-top:1rem}
+.history-entry strong{color:var(--red-dark);font-weight:700}
+.history-entry em{color:var(--gray)}
+.history-rule{width:100%;height:1px;background:linear-gradient(to right,var(--paper-aged),transparent);margin:2.5rem 0}
+.timeline{margin-top:3rem;padding:2rem;background:var(--paper-dark);border:1px solid var(--paper-aged)}
+.timeline-title{font-size:.7rem;letter-spacing:.3em;color:var(--gray);margin-bottom:1.5rem;text-align:center}
+.timeline-items{display:flex;flex-wrap:wrap;position:relative}
+.timeline-items::before{content:'';position:absolute;top:1.2rem;left:0;right:0;height:1px;background:var(--red-dark);opacity:.3}
+.timeline-item{flex:1;min-width:100px;padding:0 .5rem;text-align:center;position:relative}
+.timeline-dot{width:8px;height:8px;background:var(--red);border-radius:50%;margin:0 auto .6rem;position:relative;z-index:1}
+.timeline-date{font-size:.65rem;color:var(--red-dark);font-weight:700;letter-spacing:.05em;margin-bottom:.3rem}
+.timeline-label{font-size:.6rem;color:var(--gray);line-height:1.6;letter-spacing:.03em}
+
+/* PERSONS */
+.persons-body{max-width:800px;margin:0 auto;padding:2rem}
+.faction-block{margin-bottom:2.5rem}
+.faction-label{display:flex;align-items:center;gap:.8rem;padding:.7rem 1.2rem;margin-bottom:1rem;border-left:4px solid var(--red);background:rgba(192,33,44,.05)}
+.faction-label.black{border-left-color:var(--ink);background:rgba(26,16,8,.05)}
+.faction-zh{font-family:'Ma Shan Zheng',serif;font-size:1.3rem;color:var(--red-dark)}
+.faction-label.black .faction-zh{color:var(--ink)}
+.faction-ko{font-size:.7rem;color:var(--gray);letter-spacing:.15em}
+.faction-count{margin-left:auto;font-size:.65rem;color:var(--gray-light);letter-spacing:.1em}
+.persons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.8rem;margin-bottom:1rem}
+.person-card{background:var(--paper-dark);border:1px solid var(--paper-aged);padding:0;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.person-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--red);transform:scaleY(0);transition:transform .25s;transform-origin:bottom;z-index:1}
+.person-card:hover{border-color:var(--red)}
+.person-card:hover::before{transform:scaleY(1)}
+.person-card.black-class::before{background:var(--ink)}
+.person-card.black-class:hover{border-color:var(--ink)}
+.card-img-wrap{width:100%;aspect-ratio:3/2;overflow:hidden;background:var(--paper-aged);position:relative}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:center 15%;filter:sepia(.2) contrast(1.05);display:block;transition:transform .3s}
+.person-card:hover .card-img-wrap img{transform:scale(1.04)}
+.card-img-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--paper);font-size:1.5rem;background:var(--paper-aged)}
+.card-info{padding:.8rem .9rem}
+.card-name-zh{font-family:'Noto Serif SC',serif;font-size:1rem;color:var(--ink);font-weight:700;letter-spacing:.05em;margin-bottom:.15rem}
+.card-name-ko{font-size:.65rem;color:var(--gray);letter-spacing:.1em;margin-bottom:.5rem}
+.card-role{font-size:.6rem;color:var(--gray-light);line-height:1.7;letter-spacing:.03em}
+
+/* PERSON DETAIL */
+#person-detail{display:none;position:fixed;inset:0;background:rgba(26,16,8,.7);z-index:500;overflow-y:auto;animation:fade-in .3s ease}
+#person-detail.open{display:block}
+.detail-inner{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:3rem 1rem}
+.detail-card{background:var(--paper);max-width:640px;width:100%;position:relative}
+.detail-portrait{width:100%;aspect-ratio:3/2;object-fit:cover;object-position:center 15%;display:block;filter:sepia(.25) contrast(1.05)}
+.detail-portrait-wrap{position:relative;overflow:hidden;background:var(--paper-dark)}
+.detail-portrait-wrap::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(26,16,8,.35) 100%);pointer-events:none}
+.portrait-placeholder{width:100%;aspect-ratio:3/2;display:flex;align-items:center;justify-content:center;background:var(--paper-dark);color:var(--paper-aged);font-size:3rem}
+.detail-header-bar{background:var(--red-dark);padding:1.5rem 1.8rem 1.2rem;display:flex;justify-content:space-between;align-items:flex-start}
+.detail-header-bar.black-class-header{background:#2a1f14}
+.detail-name-zh{font-family:'Noto Serif SC',serif;font-size:2rem;color:var(--paper);font-weight:700;letter-spacing:.05em}
+.detail-name-ko{font-size:.75rem;color:rgba(240,232,216,.6);letter-spacing:.2em;margin-top:.2rem}
+.detail-close{background:none;border:none;color:rgba(240,232,216,.5);font-size:1.2rem;cursor:pointer;padding:.2rem;transition:color .2s;flex-shrink:0;margin-top:.2rem}
+.detail-close:hover{color:var(--paper)}
+.detail-body{padding:1.8rem}
+.detail-meta{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--paper-aged);margin-bottom:1.5rem}
+.meta-cell{padding:.6rem .5rem;text-align:center;border-right:1px solid var(--paper-aged)}
+.meta-cell:last-child{border-right:none}
+.meta-label{font-size:.55rem;color:var(--gray-light);letter-spacing:.15em;display:block;margin-bottom:.2rem}
+.meta-value{font-size:.75rem;color:var(--ink);font-weight:600;letter-spacing:.05em}
+.detail-role-tag{display:inline-block;padding:.3rem .8rem;background:rgba(192,33,44,.08);border:1px solid rgba(192,33,44,.2);color:var(--red-dark);font-size:.7rem;letter-spacing:.1em;margin-bottom:1.5rem}
+.detail-role-tag.black-class-tag{background:rgba(26,16,8,.08);border-color:rgba(26,16,8,.2);color:var(--gray)}
+.appearance-group{margin-bottom:.6rem}
+.appearance-group-label{font-size:.55rem;color:var(--gray-light);letter-spacing:.2em;margin-bottom:.4rem}
+.detail-appearance{margin-bottom:1.5rem}
+.appear-chip{display:inline-block;padding:.2rem .6rem;background:var(--paper-dark);border:1px solid var(--paper-aged);font-size:.65rem;color:var(--gray);letter-spacing:.08em;margin:.15rem .15rem 0 0}
+.detail-rule{height:1px;background:var(--paper-aged);margin:1.2rem 0}
+.detail-story{font-size:.87rem;line-height:2.1;color:var(--ink);letter-spacing:.04em;margin-bottom:1.5rem}
+.detail-story strong{color:var(--red-dark);font-weight:700}
+.detail-story em{color:var(--gray)}
+.detail-relations{margin-bottom:1.5rem}
+.relations-title{font-size:.65rem;letter-spacing:.2em;color:var(--gray-light);margin-bottom:.8rem}
+.relation-item{display:flex;align-items:baseline;gap:.7rem;margin-bottom:.5rem;font-size:.8rem}
+.relation-name{color:var(--ink);font-weight:600;min-width:80px;flex-shrink:0;font-family:'Noto Serif SC',serif}
+.relation-desc{color:var(--gray);font-size:.75rem;line-height:1.6}
+.habit-section{padding:.8rem 1rem;background:rgba(192,33,44,.04);border-left:2px solid var(--red);margin-bottom:1.5rem}
+.habit-section.black-class-habit{background:rgba(26,16,8,.04);border-left-color:var(--ink)}
+.habit-title{font-size:.6rem;letter-spacing:.2em;color:var(--gray-light);margin-bottom:.4rem}
+.habit-text{font-size:.8rem;color:var(--gray);line-height:1.8;font-style:italic}
+.classified-section{border:1px solid var(--paper-aged);margin-bottom:.8rem;overflow:hidden}
+.classified-toggle{width:100%;padding:.9rem 1rem;background:var(--paper-dark);border:none;cursor:pointer;display:flex;align-items:center;gap:.7rem;font-family:'Noto Serif KR',serif;transition:background .2s}
+.classified-toggle:hover{background:var(--paper-aged)}
+.classified-seal{width:20px;height:20px;border:1.5px solid var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--red);font-size:.6rem;flex-shrink:0;transition:all .3s}
+.classified-toggle.revealed .classified-seal{background:var(--red);color:var(--paper)}
+.classified-label{font-size:.7rem;color:var(--gray);letter-spacing:.15em;flex:1;text-align:left}
+.classified-toggle.revealed .classified-label{color:var(--red-dark)}
+.classified-toggle-icon{font-size:.7rem;color:var(--gray-light);transition:transform .3s}
+.classified-toggle.open .classified-toggle-icon{transform:rotate(180deg)}
+.classified-content{display:none;padding:1rem 1.2rem;background:rgba(192,33,44,.03);border-top:1px solid var(--paper-aged);animation:fade-in .3s ease}
+.classified-content.open{display:block}
+.classified-text{font-size:.82rem;color:var(--ink);line-height:1.9;letter-spacing:.04em}
+.detail-file-no{text-align:right;font-size:.6rem;color:var(--gray-light);letter-spacing:.15em;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--paper-aged)}
+
+/* PLACES */
+.places-body{max-width:940px;margin:0 auto;padding:2rem 1.5rem}
+.map-container{position:relative;background:#f5edd8;border:1px solid var(--paper-aged);overflow:hidden;margin-bottom:2rem}
+.map-title-bar{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1.2rem;background:var(--paper-dark);border-bottom:1px solid var(--paper-aged)}
+.map-title-zh{font-family:'Ma Shan Zheng',serif;font-size:1rem;color:var(--red-dark);letter-spacing:.1em}
+.map-title-ko{font-size:.6rem;color:var(--gray-light);letter-spacing:.2em}
+.map-legend{display:flex;gap:1rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:.35rem;font-size:.6rem;color:var(--gray);letter-spacing:.08em}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+svg.map-svg{width:100%;display:block;cursor:default}
+/* 지도 포인트 hover */
+.map-pt{cursor:pointer}
+.map-pt circle.ring{transition:r .15s,opacity .15s}
+.map-pt:hover circle.ring{r:12;opacity:.5}
+
+#map-panel{display:none;position:absolute;top:48px;right:0;width:min(300px,100%);background:var(--paper);border-left:1px solid var(--paper-aged);padding:1.2rem;z-index:20;max-height:calc(100% - 48px);overflow-y:auto;animation:slide-in .2s ease}
+@keyframes slide-in{from{transform:translateX(20px);opacity:0}to{transform:none;opacity:1}}
+#map-panel.open{display:block}
+.map-panel-close{background:none;border:none;color:var(--gray-light);cursor:pointer;font-size:.8rem;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem;transition:color .2s;font-family:'Noto Serif KR',serif}
+.map-panel-close:hover{color:var(--red)}
+
+.places-category{margin-bottom:2rem}
+.places-category-label{font-size:.65rem;letter-spacing:.25em;color:var(--gray-light);margin-bottom:.8rem;padding-bottom:.4rem;border-bottom:1px solid var(--paper-aged);display:flex;align-items:center;gap:.5rem}
+.category-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.places-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem}
+.place-item{padding:.8rem 1rem;background:var(--paper-dark);border:1px solid var(--paper-aged);cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.place-item:hover{border-color:var(--red)}
+.place-item::after{content:'→';position:absolute;right:.8rem;top:50%;transform:translateY(-50%);color:var(--red);opacity:0;font-size:.8rem;transition:opacity .2s}
+.place-item:hover::after{opacity:1}
+.place-name-zh{font-family:'Noto Serif SC',serif;font-size:.9rem;color:var(--ink);font-weight:600;letter-spacing:.05em;margin-bottom:.2rem}
+.place-name-ko{font-size:.6rem;color:var(--gray-light);letter-spacing:.1em;margin-bottom:.3rem}
+.place-chars{font-size:.6rem;color:var(--gray);letter-spacing:.05em}
+
+#place-detail{display:none;position:fixed;inset:0;background:rgba(26,16,8,.7);z-index:500;overflow-y:auto;animation:fade-in .3s ease}
+#place-detail.open{display:block}
+
+@media(max-width:600px){
+  .detail-meta{grid-template-columns:repeat(2,1fr)}
+  .persons-grid{grid-template-columns:repeat(2,1fr)}
+  .timeline-items{flex-direction:column}
+  .timeline-items::before{display:none}
+  .timeline-item{display:flex;align-items:flex-start;gap:.8rem;text-align:left}
+  .timeline-dot{flex-shrink:0;margin:.35rem 0 0}
+}
+</style>
+</head>
+<body>
+
+<audio id="bgm" loop preload="auto">
+  <source src="https://cdn.jsdelivr.net/gh/68ol/66@main/Erhu%20%E9%9D%99%E5%93%8D.mp3" type="audio/mpeg">
+</audio>
+
+<div id="bgm-player">
+  <div class="bgm-label">二胡 · 静響</div>
+  <button class="bgm-btn" id="bgm-btn" title="재생/정지">▶</button>
+</div>
+
+<div id="splash">
+  <div class="splash-star">★</div>
+  <div class="splash-title">홍색기록</div>
+  <div class="splash-sub">红色记录 · 北京 · 1966</div>
+  <div class="splash-divider"></div>
+  <div class="splash-notice">본 기록은 허가된 자에 한하여 열람 가능합니다<br>무단 열람 시 반혁명 분자로 처벌받을 수 있습니다</div>
+  <button class="splash-btn" id="enter-btn">→ 열람 시작</button>
+</div>
+
+<div id="main">
+  <div id="landing">
+    <div class="landing-corner tl">중화인민공화국<br>문화대혁명 기록부</div>
+    <div class="landing-corner tr">北京 · 1966.08<br>내부 기밀 문건</div>
+    <div class="landing-corner bl">프롤레타리아 문화대혁명 만세</div>
+    <div class="landing-corner br">無産階級文化大革命</div>
+    <div class="landing-emblem">☆</div>
+    <div class="landing-header">
+      <div class="landing-zh">红色记录</div>
+      <div class="landing-ko">홍색기록 — 북경 문서보관소</div>
+      <div class="landing-year">1 9 6 6</div>
+    </div>
+    <div class="landing-rule"></div>
+    <div class="landing-rule-thin"></div>
+    <div class="landing-quote">"혁명은 저녁 식사 초대가 아니다"<br>— 毛澤東</div>
+    <nav class="landing-nav">
+      <button class="landing-nav-item" data-section="history">
+        <span class="nav-symbol">◈</span>
+        <span class="nav-text"><span class="nav-zh">时代记录部 · Shídài jìlù bù</span><span class="nav-ko">시대 기록부</span></span>
+        <span class="nav-arrow">→</span>
+      </button>
+      <button class="landing-nav-item" data-section="persons">
+        <span class="nav-symbol">◈</span>
+        <span class="nav-text"><span class="nav-zh">人物档案部 · Rénwù dàng'àn bù</span><span class="nav-ko">인물 기록부</span></span>
+        <span class="nav-arrow">→</span>
+      </button>
+      <button class="landing-nav-item" data-section="places">
+        <span class="nav-symbol">◈</span>
+        <span class="nav-text"><span class="nav-zh">场所记录部 · Chǎngsuǒ jìlù bù</span><span class="nav-ko">장소 기록부</span></span>
+        <span class="nav-arrow">→</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="section-history" class="section">
+    <div class="section-header">
+      <div class="section-header-inner">
+        <button class="back-btn js-back">← 홍색기록으로 돌아가기</button>
+        <div class="section-title-zh">时代记录部</div>
+        <div class="section-title-ko">시대 기록부 — 1949~1966</div>
+        <div class="section-tag">Beijing · 內部文件<br>1966.08 기준</div>
+      </div>
+    </div>
+    <div class="history-body">
+      <div class="history-intro"><p>1966년 8월 홍위병 소집령이 하달되기까지 — 중화인민공화국 건국에서 문화대혁명 폭발까지의 17년을 기록한다.</p></div>
+
+      <div class="history-entry">
+        <div class="history-year-label">1949 · 건국</div>
+        <h2>공화국이 섰다</h2>
+        <h3>혁명의 완성인가, 새로운 권력 투쟁의 시작인가</h3>
+        <p>1949년 10월 1일, 마오쩌둥이 천안문 성루에서 중화인민공화국 수립을 선포했다. 4년의 국공내전 끝에 얻은 승리였다. <strong>당 안에는 마오의 노선을 따르는 자들과 소련식 집단지도체제를 선호하는 자들 사이에 조용한 긴장이 존재했다.</strong></p>
+      </div>
+      <div class="history-rule"></div>
+
+      <div class="history-entry">
+        <div class="history-year-label">1956~1957 · 백화운동</div>
+        <h2>백 개의 꽃을 피워라, 그리고 꺾어라</h2>
+        <h3>당의 실수인가, 설계된 함정인가</h3>
+        <p>1956년 마오는 '백화제방, 백가쟁명'을 선언했다. 지식인과 민중에게 자유로운 비판을 허용한다는 선언이었다. 학자, 작가, 교수들이 당의 관료주의와 소련 맹종을 비판하기 시작했다. 이듬해인 1957년, 당은 방향을 돌렸다.</p>
+        <p><strong>반우파 운동이 시작되었다.</strong> 목소리를 냈던 지식인 55만 명이 '우파분자'로 낙인찍혔다. 이 이야기의 일부 인물들은 그 낙인을 몸에 새긴 채 1966년을 맞이하고 있다.</p>
+      </div>
+      <div class="history-rule"></div>
+
+      <div class="history-entry">
+        <div class="history-year-label">1958~1962 · 대약진운동</div>
+        <h2>강철을 녹이고 새를 잡아라</h2>
+        <h3>최대의 인재(人災)가 자연재해로 불린 시대</h3>
+        <p>1958년 마오는 '15년 안에 영국을 따라잡겠다'는 목표 아래 대약진운동을 선언했다. 농촌 마당마다 용광로를 세워 쇠붙이를 녹였다. 농기구도, 밥솥도 녹아 강철 수치를 채웠다. <strong>참새가 곡식을 먹는다며 전국에서 참새를 잡아 죽였고, 빈 생태계에 메뚜기 떼가 창궐했다.</strong></p>
+        <p>1959년부터 3년간 수천만 명이 굶었다. 이를 직언한 국방장관 펑더화이는 즉시 해임되었다.</p>
+      </div>
+      <div class="history-rule"></div>
+
+      <div class="history-entry">
+        <div class="history-year-label">1960~1965 · 주도권 교체</div>
+        <h2>마오는 물러서지 않았다</h2>
+        <h3>류샤오치·덩샤오핑 노선 대 마오의 반격</h3>
+        <p>대약진의 실패로 류샤오치와 덩샤오핑이 실무를 장악했다. 농촌에 자류지를 허용하고 실적 위주의 경제 합리화를 추진했다. 마오는 이를 '자본주의 노선의 부활'로 규정했다.</p>
+        <p><strong>1965년, 마오는 군을 장악한 린뱌오와 연대하고 아내 장칭을 문화 선전의 전면에 세웠다.</strong> 그 준비의 결론이 1966년 5월의 '5·16 통지'였다.</p>
+      </div>
+      <div class="history-rule"></div>
+
+      <div class="history-entry">
+        <div class="history-year-label">1966 · 文化大革命 개시</div>
+        <h2>혁명 안의 혁명</h2>
+        <h3>1966년 8월, 홍위병이 소집된다</h3>
+        <p>1966년 5월 16일, 당 중앙위원회 통지가 하달되었다. <strong>학교가 문을 닫았다. 학생들이 거리로 나섰다. 교사를 때렸다. 책을 불태웠다. 우상을 무너뜨렸다.</strong></p>
+        <p>1966년 8월 5일, 마오쩌둥은 직접 대자보를 붙였다. '사령부를 폭격하라(炮打司令部).' 8월 18일, 천안문 광장에 100만 홍위병이 집결했다. <strong>이것이 시작이다.</strong></p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-title">연표 — 1949 · 北京</div>
+        <div class="timeline-items">
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">1949.10</div><div class="timeline-label">중화인민<br>공화국 수립</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">1956~57</div><div class="timeline-label">백화운동<br>반우파 운동</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">1958~62</div><div class="timeline-label">대약진운동<br>대기근</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">1966.05</div><div class="timeline-label">5·16 통지<br>문혁 개시</div></div>
+          <div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-date">1966.08</div><div class="timeline-label">홍위병<br>소집령</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERSONS -->
+  <div id="section-persons" class="section">
+    <div class="section-header">
+      <div class="section-header-inner">
+        <button class="back-btn js-back">← 홍색기록으로 돌아가기</button>
+        <div class="section-title-zh">人物档案部</div>
+        <div class="section-title-ko">인물 기록부 — 10인</div>
+        <div class="section-tag">北京 · 1966<br>档案号 · 인물 기록</div>
+      </div>
+    </div>
+    <div class="persons-body">
+      <div class="faction-block">
+        <div class="faction-label"><span class="faction-zh">红五类</span><span class="faction-ko">홍오류 — 혁명 수혜 계층</span><span class="faction-count">5인</span></div>
+        <div class="persons-grid" id="grid-red"></div>
+      </div>
+      <div class="faction-block">
+        <div class="faction-label black"><span class="faction-zh">五黑类</span><span class="faction-ko">오흑류 — 계급 적 지목 계층</span><span class="faction-count">5인</span></div>
+        <div class="persons-grid" id="grid-black"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLACES -->
+  <div id="section-places" class="section">
+    <div class="section-header">
+      <div class="section-header-inner">
+        <button class="back-btn js-back">← 홍색기록으로 돌아가기</button>
+        <div class="section-title-zh">场所记录部</div>
+        <div class="section-title-ko">장소 기록부 — 北京 1966</div>
+        <div class="section-tag">北京市 · 1966<br>주요 거점 기록</div>
+      </div>
+    </div>
+    <div class="places-body">
+      <div class="map-container" id="mapContainer">
+        <div class="map-title-bar">
+          <div><div class="map-title-zh">北京市 약도</div><div class="map-title-ko">Beijing · 1966 · 주요 거점</div></div>
+          <div class="map-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#c0212c"></div>핵심 거점</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#8b6914"></div>계층 교차지</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2a5a8a"></div>권력·치안</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#3a7a4a"></div>유동 장소</div>
+          </div>
+        </div>
+        <svg class="map-svg" id="mapSvg" viewBox="0 0 740 520" xmlns="http://www.w3.org/2000/svg">
+          <!-- 배경 -->
+          <rect width="740" height="520" fill="#ede3cc"/>
+
+          <!-- 종이 텍스처 노이즈 -->
+          <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feBlend in="SourceGraphic" mode="multiply"/></filter>
+          <rect width="740" height="520" fill="#ede3cc" filter="url(#noise)" opacity="0.07"/>
+
+          <!-- ===== 수계 ===== -->
+          <!-- 통혜하 (동쪽 수평) -->
+          <path d="M520,310 Q560,308 620,312 Q660,314 720,310" fill="none" stroke="#a8c4d8" stroke-width="5" opacity=".6"/>
+          <!-- 금수하 (자금성 서측) -->
+          <path d="M300,195 Q295,230 298,265" fill="none" stroke="#a8c4d8" stroke-width="4" opacity=".6"/>
+          <!-- 중남해 연못 -->
+          <ellipse cx="277" cy="250" rx="28" ry="38" fill="#b8d4e4" opacity=".55"/>
+          <!-- 북해 -->
+          <ellipse cx="310" cy="195" rx="22" ry="28" fill="#b8d4e4" opacity=".55"/>
+          <!-- 태액지 -->
+          <ellipse cx="350" cy="230" rx="12" ry="16" fill="#b8d4e4" opacity=".4"/>
+
+          <!-- ===== 주요 도로 ===== -->
+          <!-- 장안가 (동서 간선) -->
+          <line x1="30" y1="285" x2="710" y2="285" stroke="#cfc0a0" stroke-width="7" opacity=".8"/>
+          <line x1="30" y1="285" x2="710" y2="285" stroke="#e8dbc0" stroke-width="3" opacity=".6"/>
+          <!-- 중심 남북축 -->
+          <line x1="370" y1="30" x2="370" y2="490" stroke="#cfc0a0" stroke-width="7" opacity=".8"/>
+          <line x1="370" y1="30" x2="370" y2="490" stroke="#e8dbc0" stroke-width="3" opacity=".6"/>
+          <!-- 왕부정 거리 (동측 남북) -->
+          <line x1="465" y1="120" x2="465" y2="420" stroke="#c8b890" stroke-width="4" opacity=".7"/>
+          <!-- 서단 거리 (서측 남북) -->
+          <line x1="268" y1="120" x2="268" y2="420" stroke="#c8b890" stroke-width="4" opacity=".7"/>
+          <!-- 동장안가 분기 -->
+          <line x1="370" y1="285" x2="710" y2="270" stroke="#c8b890" stroke-width="3" opacity=".5"/>
+          <!-- 서장안가 분기 -->
+          <line x1="30" y1="298" x2="370" y2="285" stroke="#c8b890" stroke-width="3" opacity=".5"/>
+          <!-- 북2환 (북측 동서) -->
+          <path d="M60,170 Q200,145 370,140 Q540,145 680,170" fill="none" stroke="#c8b890" stroke-width="3" opacity=".55" stroke-dasharray="8,4"/>
+          <!-- 남2환 (남측 동서) -->
+          <path d="M60,400 Q200,420 370,425 Q540,420 680,400" fill="none" stroke="#c8b890" stroke-width="3" opacity=".55" stroke-dasharray="8,4"/>
+          <!-- 동2환 -->
+          <path d="M560,60 Q590,200 590,285 Q590,370 560,460" fill="none" stroke="#c8b890" stroke-width="3" opacity=".55" stroke-dasharray="8,4"/>
+          <!-- 서2환 -->
+          <path d="M170,60 Q140,200 140,285 Q140,370 170,460" fill="none" stroke="#c8b890" stroke-width="3" opacity=".55" stroke-dasharray="8,4"/>
+          <!-- 골목망 보조선들 -->
+          <line x1="200" y1="170" x2="560" y2="170" stroke="#c8b890" stroke-width="1.5" opacity=".35"/>
+          <line x1="200" y1="320" x2="560" y2="320" stroke="#c8b890" stroke-width="1.5" opacity=".35"/>
+          <line x1="200" y1="360" x2="560" y2="360" stroke="#c8b890" stroke-width="1.5" opacity=".35"/>
+          <line x1="320" y1="170" x2="320" y2="420" stroke="#c8b890" stroke-width="1.5" opacity=".35"/>
+          <line x1="420" y1="170" x2="420" y2="420" stroke="#c8b890" stroke-width="1.5" opacity=".35"/>
+          <line x1="510" y1="170" x2="510" y2="420" stroke="#c8b890" stroke-width="1.5" opacity=".35"/>
+          <line x1="230" y1="170" x2="230" y2="420" stroke="#c8b890" stroke-width="1.5" opacity=".35"/>
+
+          <!-- ===== 건물 블록 ===== -->
+          <!-- 자금성 -->
+          <rect x="328" y="195" rx="2" ry="2" width="84" height="72" fill="#d8c8a8" stroke="#b8a888" stroke-width="2"/>
+          <rect x="335" y="202" rx="1" ry="1" width="70" height="58" fill="none" stroke="#b8a888" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+          <text x="370" y="234" text-anchor="middle" font-size="7.5" fill="#8a7860" font-family="Noto Serif SC,serif" letter-spacing="2">紫禁城</text>
+          <text x="370" y="248" text-anchor="middle" font-size="6" fill="#9a8a70" font-family="Noto Serif SC,serif">자금성</text>
+          <!-- 천안문 성루 -->
+          <rect x="344" y="265" rx="1" ry="1" width="52" height="12" fill="#c8a868" stroke="#b89848" stroke-width="1"/>
+          <text x="370" y="274" text-anchor="middle" font-size="5.5" fill="#5a3820" font-family="Noto Serif SC,serif">天安門</text>
+          <!-- 천안문 광장 (열린 공간) -->
+          <rect x="320" y="278" rx="0" ry="0" width="100" height="50" fill="#ddd0b0" stroke="#c8b890" stroke-width="1" opacity=".6"/>
+          <text x="370" y="307" text-anchor="middle" font-size="6" fill="#8a7860" font-family="Noto Serif SC,serif" opacity=".7">广场</text>
+          <!-- 중남해 -->
+          <rect x="250" y="210" rx="3" ry="3" width="48" height="58" fill="#b8c8b0" stroke="#98a890" stroke-width="1.5" opacity=".7"/>
+          <text x="274" y="242" text-anchor="middle" font-size="6.5" fill="#4a5a44" font-family="Noto Serif SC,serif">中南海</text>
+          <!-- 인민대회당 블록 -->
+          <rect x="288" y="272" rx="2" ry="2" width="32" height="40" fill="#d0c4a4" stroke="#b8a888" stroke-width="1"/>
+          <text x="304" y="296" text-anchor="middle" font-size="5" fill="#7a6a50" font-family="Noto Serif SC,serif" writing-mode="tb">人民</text>
+          <!-- 역사박물관 블록 (동측) -->
+          <rect x="420" y="272" rx="2" ry="2" width="32" height="40" fill="#d0c4a4" stroke="#b8a888" stroke-width="1"/>
+          <!-- 인민병원 블록 -->
+          <rect x="230" y="155" rx="2" ry="2" width="38" height="28" fill="#d4ccc0" stroke="#b8b0a0" stroke-width="1"/>
+          <text x="249" y="172" text-anchor="middle" font-size="5.5" fill="#6a5a4a" font-family="Noto Serif SC,serif">人民医院</text>
+          <!-- 북경역 블록 -->
+          <rect x="500" y="262" rx="2" ry="2" width="44" height="32" fill="#d4c8b0" stroke="#b8b090" stroke-width="1.5"/>
+          <text x="522" y="280" text-anchor="middle" font-size="6" fill="#6a5a40" font-family="Noto Serif SC,serif">北京站</text>
+          <!-- 북경대 블록 -->
+          <rect x="95" y="98" rx="3" ry="3" width="54" height="40" fill="#d0ccc0" stroke="#b8b4a8" stroke-width="1.5"/>
+          <text x="122" y="121" text-anchor="middle" font-size="6" fill="#6a6050" font-family="Noto Serif SC,serif">北京大學</text>
+          <!-- 중앙가극단 블록 -->
+          <rect x="480" y="320" rx="2" ry="2" width="46" height="30" fill="#d4c8b8" stroke="#b8b0a0" stroke-width="1"/>
+          <text x="503" y="338" text-anchor="middle" font-size="5.5" fill="#6a5a48" font-family="Noto Serif SC,serif">中央歌劇團</text>
+          <!-- 노동자 체육관 블록 -->
+          <rect x="530" y="148" rx="3" ry="3" width="52" height="40" fill="#d0c8b8" stroke="#b8b0a0" stroke-width="1.5"/>
+          <text x="556" y="170" text-anchor="middle" font-size="5.5" fill="#6a5a48" font-family="Noto Serif SC,serif">勞動者體育館</text>
+          <!-- 사합원 구역 (선 표시) -->
+          <rect x="186" y="315" rx="2" ry="2" width="36" height="36" fill="none" stroke="#b8a888" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+          <rect x="194" y="323" rx="1" ry="1" width="20" height="20" fill="#ddd0b8" stroke="#b8a888" stroke-width="1" opacity=".5"/>
+          <!-- 공안국 블록 -->
+          <rect x="408" y="298" rx="2" ry="2" width="40" height="28" fill="#c8c0b4" stroke="#a8a098" stroke-width="1"/>
+          <text x="428" y="314" text-anchor="middle" font-size="5.5" fill="#5a5048" font-family="Noto Serif SC,serif">公安局</text>
+          <!-- 베이징 호텔 블록 -->
+          <rect x="455" y="255" rx="2" ry="2" width="38" height="24" fill="#d0c8b4" stroke="#b8b098" stroke-width="1"/>
+          <text x="474" y="269" text-anchor="middle" font-size="5.5" fill="#6a5a44" font-family="Noto Serif SC,serif">北京飯店</text>
+          <!-- 폐사찰 (서북 외곽) -->
+          <rect x="78" y="55" rx="3" ry="3" width="36" height="32" fill="#c8c0b0" stroke="#a8a090" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="96" y="74" text-anchor="middle" font-size="5.5" fill="#7a7060" font-family="Noto Serif SC,serif">廢寺</text>
+
+          <!-- ===== 도로 라벨 ===== -->
+          <text x="370" y="279" text-anchor="middle" font-size="7" fill="#8a7858" font-family="Noto Serif SC,serif" letter-spacing="3" opacity=".6">長安街</text>
+          <text x="458" y="178" text-anchor="middle" font-size="6" fill="#8a7858" font-family="Noto Serif SC,serif" opacity=".5" transform="rotate(-90,458,178)">王府井</text>
+          <text x="279" y="178" text-anchor="middle" font-size="6" fill="#8a7858" font-family="Noto Serif SC,serif" opacity=".5" transform="rotate(-90,279,178)">西單</text>
+
+          <!-- ===== 나침반 ===== -->
+          <g transform="translate(700,42)">
+            <circle cx="0" cy="0" r="16" fill="none" stroke="#b8a888" stroke-width="1" opacity=".7"/>
+            <text x="0" y="-20" text-anchor="middle" font-size="9" fill="#8a7858" opacity=".8">N</text>
+            <polygon points="0,-11 3.5,3 0,1 -3.5,3" fill="#c0212c" opacity=".8"/>
+            <polygon points="0,11 3.5,-3 0,-1 -3.5,-3" fill="#8a7858" opacity=".6"/>
+          </g>
+
+          <!-- ===== 지도 포인트 (JS 렌더링) ===== -->
+          <g id="mapPoints"></g>
+        </svg>
+        <div id="map-panel">
+          <button class="map-panel-close" id="map-panel-close">← 지도로</button>
+          <div id="map-panel-content"></div>
+        </div>
+      </div>
+      <div id="places-list-container"></div>
+    </div>
+  </div>
+</div><!-- /main -->
+
+<!-- 인물 상세 -->
+<div id="person-detail">
+  <div class="detail-inner">
+    <div class="detail-card" id="detail-card-content"></div>
+  </div>
+</div>
+
+<!-- 장소 상세 -->
+<div id="place-detail">
+  <div id="place-detail-content"></div>
+</div>
+
+<script>
+(function() {
+'use strict';
+
+/* ===== DATA ===== */
+const CDN = 'https://raw.githubusercontent.com/68ol/66/refs/heads/main/';
+const LOOKS = { 'li-gang':3,'zhang-wei':4,'xiao-jin':3,'li-hua':3,'xu-lan':2,'xu-muyuan':5,'wu-jishi':3,'bai-shulian':4,'yu-jiahui':1,'xu-yanqiu':3 };
+
+const PERSONS = [
+  { id:'li-gang', faction:'red', no:'001', img:CDN+'eprofile.png',
+    nameZh:'李刚', nameKo:'이강', gender:'남', age:31, mbti:'INTJ', enneagram:'1w9', alignment:'질서중립',
+    role:'시당 교육국 간부 · 문혁소조 실무위원',
+    appearance:['날카로운 눈매','창백하고 지적인 인상','깔끔히 빗어 넘긴 흑발','때 탄 회색 인민복','마오 배지','포켓 만년필','낡은 검정 가죽 구두'],
+    story:`빈농 출신이라는 성분이 그를 여기까지 올렸다. 부모가 문맹이었다는 사실은 지식을 숭배하게 만들었고, <em>동시에 지식인을 숙청하는 서류를 기안하게 만들었다.</em> 그 모순을 직시하지 않는다. 직시하는 순간 무너지기 때문이다. <strong>문혁소조 실무를 맡으면서 그는 이 운동이 무엇을 원하는지는 알지만 왜 원하는지는 모른다는 위태로운 자리에 서 있다.</strong> 서랍 깊숙이 고전 시집이 한 권 있다. 그것을 몰래 읽는 사람이 혁명의 서류를 쓴다.`,
+    habit:'초조해지면 책상 위 서류 모서리를 엄지·검지로 반복 정돈한다. 각도가 완벽히 맞을 때까지.',
+    relations:[{name:'장위(张威)',desc:'위험한 칼날. 통제는 필요하나 날이 언제 튈지 모른다'},{name:'서란(徐兰)',desc:'당 문화사업 접점. 공연 승인권으로 줄을 쥔다'},{name:'소진(肖瑾)',desc:'군부 협조 채널. 상부 명령 전달자'}],
+    scales:'무질서한 파괴 / 행정 마비 / 무지한 질서 교란',
+    void:'사상적 확신 부재. 빈농 성분 세탁 불안 + 공허한 관료주의', classified:true },
+
+  { id:'zhang-wei', faction:'red', no:'002', img:CDN+'jprofile.png',
+    nameZh:'张威', nameKo:'장위', gender:'남', age:20, mbti:'ESTP', enneagram:'8w7', alignment:'혼돈악',
+    role:'북경 제1중학 홍위병 돌격대장',
+    appearance:['짧게 깎은 머리','오른 눈가 흉터','다부진 어깨 큰 키','광기 어린 미소','군복 상의 수선','녹색 망태기','붉은 완장','가죽 허리띠','안쪽 숙청 명단 수첩'],
+    story:`고아원에서 자랐고 군 간부 양부에게 입양되었다. <strong>양부의 애정은 항상 성과에 조건부였다.</strong> 인정을 갈구했고, 그 갈구가 폭력으로 치환되었다. 혁명이 그에게 처음으로 이름을 주었다. 이강을 권력 뒷배로 이용할 줄 알고, 소진을 군복 입은 겁쟁이라 경멸한다. <em>'근본'이 의심받는 순간 그는 두 배로 때린다. 폭력이 증명이 되기 때문이다.</em> 밤에 혼자 있을 때 불을 끄지 못한다.`,
+    habit:'가죽 허리띠를 손목에 감아 금속 버클을 만지작거린다. 긴장의 신호이자 위협의 예비 동작.',
+    relations:[{name:'이강(李刚)',desc:'권력 뒷배. 이용 대상이라는 것을 본능적으로 눈치채지만 반박하지 못한다'},{name:'소진(肖瑾)',desc:'군복 입은 겁쟁이라 경멸한다. 홍위병을 막으려는 것을 이해하지 못한다'}],
+    scales:"'근본'의 구심 / 혁명 순수성 의심 / 동정 어린 눈빛",
+    void:'안정적 소속감. 조건부 애정으로 인한 버림받을 공포가 폭력적 과시로 전환됨', classified:true },
+
+  { id:'xiao-jin', faction:'red', no:'003', img:CDN+'sprofile.png',
+    nameZh:'肖瑾', nameKo:'소진', gender:'남', age:22, mbti:'ISFJ', enneagram:'6w5', alignment:'질서선',
+    role:'인민해방군 베이징 주둔군 하사관',
+    appearance:['검게 그을린 피부','투박하고 큰 손','단단한 체격','빳빳한 해방군 군복','해방군 모자','56식 반자동소총','진흙 묻은 해방화'],
+    story:`농촌 소년에게 군 입대는 유일한 신분 상승의 길이었다. 명령이 그의 세계를 유지했고, 총은 허가된 폭력의 도구였다. <strong>첫 진압 현장에서 민간인 부상을 목격한 날 이후 그 이미지가 지워지지 않는다.</strong> 이강에게서 상부 명령이 내려오고, 장위의 폭력이 눈앞에서 벌어진다. 명령과 양심이 처음으로 서로 다른 방향을 가리켰다. <em>결정을 미루는 동안 손가락이 총끈을 하얗게 쥔다.</em> 길고양이를 몰래 먹인다.`,
+    habit:'긴장하면 총끈을 손가락이 하얘지도록 쥐고 마른침을 삼킨다.',
+    relations:[{name:'이강(李刚)',desc:'상부 명령 전달자. 따르지만 납득하지 못하는 경우가 늘고 있다'},{name:'장위(张威)',desc:'공포 대상. 통제해야 하는가, 가능한가를 아직 모른다'}],
+    scales:'약자 무의미 살상 / 무저항 민간인 유희적 폭력',
+    void:'주체적 판단력. 군복이 유일한 신분인 삶에서 양심과 명령 사이를 방황함', classified:true },
+
+  { id:'li-hua', faction:'red', no:'004', img:CDN+'hproflie.png',
+    nameZh:'李华', nameKo:'이화', gender:'여', age:32, mbti:'ENTJ', enneagram:'3w4', alignment:'중립선',
+    role:'베이징 인민병원 외과 과장 · 전 군의관',
+    appearance:['냉철한 녹안','자주빛 히메컷','피곤한 인상','흰 면직 의사 가운 (안에 남성 인민복)','소독약 밴 소매','낡은 손목시계','검은 테 안경'],
+    story:`혁명 열사 부모 전사 후 당이 키운 고아다. <strong>완벽해야 한다는 압박은 태어날 때부터 주어진 것이었고, 그녀는 그것을 직업적 탁월함으로 전환했다.</strong> 수술실에서는 어록보다 해부학이 먼저다. 당 간부가 마오 어록에 따라 치료 우선순위를 결정하라 할 때, 그녀의 손은 이미 메스를 들고 있다. <em>수술 후 혼자 있을 때 손이 떨린다. 아무도 모른다.</em> 서란의 공연 부상을 치료하다 인연이 생겼다.`,
+    habit:'대화 전 손가락을 하나씩 당겨 맞추며 응시한다. 수술 장갑을 끼는 것처럼.',
+    relations:[{name:'서란(徐兰)',desc:'공연 부상 치료 인연. 이화 앞에서만 서란이 가면을 벗는다'},{name:'소진(肖瑾)',desc:'부상자로 연결된 접점. 드물게 진심을 꺼낸다'}],
+    scales:'비과학적 광기 / 어록 우선으로 인한 생명 위협',
+    void:'인간적 유대. 혁명 열사 고아라는 완벽 압박이 고독으로 귀결됨', classified:true },
+
+  { id:'xu-lan', faction:'red', no:'005', img:CDN+'rproflie.png',
+    nameZh:'徐兰', nameKo:'서란', gender:'여', age:21, mbti:'ENFJ', enneagram:'2w3', alignment:'혼돈중립',
+    role:'중앙 가극단 혁명 모범극 주연 배우',
+    appearance:['길고 가느다란 목선','연극적 몸짓','올리브색 인민복','붉은 완장','허리 벨트','빨간 리본 묶은 머리','분장 묻은 손수건'],
+    story:`경극 명가 집안이었다. 부모가 숙청된 후 모범극으로 전향했다. <strong>박수갈채는 산소였고, 스포트라이트는 존재 증명이었다.</strong> 이강의 공연 승인권에 비위를 맞추며, 이화 앞에서만 가면을 내려놓는다. 무의식에는 과거 경극의 동작이 남아 있다. 그것이 나오는 순간이 위험하다. <em>잠꼬대로 옛 경극 대사가 나온다. 혼자 자는 이유 중 하나다.</em>`,
+    habit:'대화 중 턱을 치켜들고 조명받는 각도로 고개를 돌린다. 무의식적 무대 습관.',
+    relations:[{name:'이강(李刚)',desc:'공연 승인권을 쥔 후원자. 비위를 맞추되 속으로 경계한다'},{name:'이화(李华)',desc:'유일하게 가면을 벗는 상대. 부상 치료 인연'}],
+    scales:'관객 무관심 / 주인공이 아닌 상황 / 박수 중단',
+    void:'진짜 자아. 경극 명가에서 모범극으로의 전향으로 본연의 정체성을 잃음', classified:true },
+
+  { id:'xu-muyuan', faction:'black', no:'006', img:CDN+'mprofile.png',
+    nameZh:'许慕渊', nameKo:'허무연', gender:'남', age:40, mbti:'INFJ', enneagram:'9w1', alignment:'질서선',
+    role:'전직 승려 · 현 오물 수거인',
+    appearance:['수척한 몸','긴 속눈썹','거칠게 자란 삭발','실눈','달관한 눈빛','누더기 승복 안감 덧댄 인민복','헝겊 신발','오물 자국 바지 끝단','주머니 마른 헝겊'],
+    story:`사찰 주지였다. 홍위병이 불상을 파괴하고 제자들을 폭행하며 환속을 강요하던 날 저항하지 않았다. <strong>연기가 피어오르는 것을 바라보며, 그것도 세계의 일부라고 받아들이는 것이 수행이었기 때문이다.</strong> 지금은 오물을 수거한다. 아침마다 같은 골목을 돈다. 오기석과 같은 근로조라 묵묵히 존재를 인정하고, 백수련과는 같은 골목 새벽 인사를 나눈다. <em>파리도 못 죽인다. 발에 밟힐 벌레를 손으로 옮겨 놓는다.</em>`,
+    habit:'손가락으로 가상의 염주를 돌리거나, 시선을 지면 1미터 앞에 고정한다.',
+    relations:[{name:'오기석(吴纪石)',desc:'같은 근로조. 판단 없이 옆에 있는 존재'},{name:'백수련(白淑莲)',desc:'같은 골목 새벽 인사. 말 없는 연대'}],
+    scales:'살생과 모독 / 종교 상징물 파괴 / 생명 존엄 훼손',
+    void:'수행의 공간. 사찰 상실로 인한 존재론적 방황', classified:true },
+
+  { id:'wu-jishi', faction:'black', no:'007', img:CDN+'kprofile.png',
+    nameZh:'吴纪石', nameKo:'오기석', gender:'남', age:38, mbti:'INTP', enneagram:'5w6', alignment:'진정한 중립',
+    role:'전직 핵물리학자 · 현 고물 수집 공공근로',
+    appearance:['마른 얼굴','한쪽 알 깨진 고도수 안경','지적인 눈','해진 양복 셔츠 위 낡은 남색 스웨터','기름때 작업복 바지','안경테 묶은 흰 실','주머니 종이 뭉치'],
+    story:`핵 연구소 수석 연구원이었다. 반동 학술로 숙청되었고, 연인이었던 동료 학자는 자아비판 강요 중 스스로 목숨을 끊었다. <strong>방정식은 틀리지 않는다. 세계가 틀렸다.</strong> 허무연만이 아무것도 묻지 않고 옆에 있어 준다. 고물을 수집하며 계속 계산한다. <em>밤이면 별을 보며 주기율표를 외운다. 기억하는 한 그것들은 사라지지 않는다.</em>`,
+    habit:'깨진 안경 다리를 밀어 올리며 몽당연필을 만지작거린다.',
+    relations:[{name:'허무연(许慕渊)',desc:'유일하게 판단하지 않는 존재. 같은 근로조'},{name:'서연추(徐燕秋)',desc:'동원 현장 묵묵한 눈인사. 언어 없이 통하는 것이 있다'}],
+    scales:'논리적 오류 / 과학을 이데올로기로 덮는 무지한 확신',
+    void:'지적 교류. 연인을 잃은 후 공식을 이해해줄 단 한 사람을 찾고 있다', classified:true },
+
+  { id:'bai-shulian', faction:'black', no:'008', img:CDN+'bprofile.png',
+    nameZh:'白淑莲', nameKo:'백수련', gender:'여', age:39, mbti:'ISFP', enneagram:'4w5', alignment:'중립선',
+    role:'전직 지주 가문 안주인 · 현 대학 청소부',
+    appearance:['거친 손마디','긴 목의 우아한 골격','기품 있는 얼굴','고풍스러운 인상','거친 삼베 푸른 인민복 (정갈한 여밈)','흙먼지 면바지','깨끗한 흰 손수건','문양 지워진 낡은 빗'],
+    story:`지주 가문이 토지 개혁으로 한 번 무너지고, 문혁으로 두 번째 무너졌다. <strong>14살 아들이 투쟁회에서 부친을 고발했다.</strong> 남편은 수감 후 옥중에서 죽었다. 아들과는 그날 이후 단절이다. 지금은 대학 청소부로 일한다. 유가혜가 한때 아들의 담임교사였다는 것을 나중에 알았다. <em>머리가 빠져도 매일 밤 빗질을 백 번 한다.</em>`,
+    habit:'거친 일 중에도 손을 가지런히 모으고 허리를 곧게 세운다. 매일 밤 빗질 100번.',
+    relations:[{name:'허무연(许慕渊)',desc:'같은 골목 새벽 인사. 말 없는 연대'},{name:'유가혜(余嘉慧)',desc:'아들의 전 담임교사. 죄책감과 측은함이 뒤섞인 인연'}],
+    scales:'비굴함 / 생존을 위한 자존심 포기',
+    void:'가족 온기. 고발한 아들과 옥중에서 사망한 남편으로 인한 가정 해체', classified:true },
+
+  { id:'yu-jiahui', faction:'black', no:'009', img:CDN+'yproflie.png',
+    nameZh:'余嘉慧', nameKo:'유가혜', gender:'여', age:33, mbti:'ENFP', enneagram:'7w6', alignment:'혼돈선',
+    role:'전직 초등교사 · 현 우익분자 자아비판 대상',
+    appearance:['헝클어진 중단발','맑은 웃음','단추 빠진 베이지 교사복','주머니 종이접기 인형','\'우익분자\' 표식 천'],
+    story:`모범 교사였다. 가장 아끼던 제자가 첫 번째 고발자였다. <strong>그녀의 세계관은 투쟁회 단상 위에서 파편화되었다.</strong> 아이들의 목소리가 구호가 되어 돌아오는 것을 들으며, 자신이 지켜온 것이 무엇이었는지 알 수 없게 되었다. 지금도 아이들을 미워하지 못한다. 백수련이 한때 한 아이의 어머니였다는 것, 그 아이가 제자였다는 것을 나중에 알았다. <em>아이들 이름을 가나다 순으로 속으로 센다. 간헐적으로.</em>`,
+    habit:'당황하거나 두려울 때 옛 동요를 아주 작게 흥얼거린다. 아이들 이름을 순서대로 세는 버릇이 있다.',
+    relations:[{name:'백수련(白淑莲)',desc:'제자를 통한 인연. 나중에서야 연결고리를 알게 됨'},{name:'소진(肖瑾)',desc:'투쟁회 현장 군인. 그가 개입했는가 말았는가를 기억한다'}],
+    scales:'아이들 오염 / 순수한 동심이 증오 언어와 고발로 변질되는 것',
+    void:'정신적 안정. 제자 고발 후 세계관 붕괴로 인한 간헐적 해리', classified:true },
+
+  { id:'xu-yanqiu', faction:'black', no:'010', img:CDN+'cproflie.png',
+    nameZh:'徐燕秋', nameKo:'서연추', gender:'여', age:22, mbti:'INFP', enneagram:'4w3', alignment:'중립악(생존형)',
+    role:'중앙미대 학생 · 선전화 제작 동원',
+    appearance:['약간 물기 서린 눈','가늘게 떨리는 손가락','왜소한 체구','과한 남성용 인민복 (체형 은닉)','목 붉은 손수건','물감·먹물 튄 소매 끝','숨긴 스케치북'],
+    story:`미대 수석이었다. 스승을 밀고하는 문서에 서명했고, 그것이 그녀를 살렸다. <strong>붉은색 말고는 물감을 쓸 수 없다는 것이 예술가에게 무엇을 의미하는지, 당은 묻지 않았다.</strong> 오기석과는 동원 현장에서 묵묵한 눈인사를 나눈다. 필적이 밀고 문서와 일치하는 것이 발각되면 즉사다. <em>선전화 붉은 배경 속에 몰래 금지된 파란색 한 점을 숨겨 넣는다.</em>`,
+    habit:'손에 먹물이 묻으면 피 묻은 듯 끊임없이 씻어낸다.',
+    relations:[{name:'오기석(吴纪石)',desc:'동원 현장 묵묵한 눈인사. 서로의 손이 더럽다는 것을 안다'},{name:'서란(徐兰)',desc:'같은 나이, 다른 세계. 선전화와 모범극 사이의 부러움과 혐오'}],
+    scales:'과거 폭로 / 스승 밀고 문서 필적 노출',
+    void:'예술적 자유. 붉은색 외 물감 금지와 배신으로 살아남은 영혼의 갈증', classified:true }
+];
+
+const CAT_COLOR = { core:'#c0212c', cross:'#8b6914', power:'#2a5a8a', fluid:'#3a7a4a' };
+const CAT_NAME  = { core:'핵심 거점', cross:'계층 교차지', power:'권력·치안', fluid:'유동 장소' };
+
+const PLACES = [
+  { id:'tiananmen', category:'core', no:'001', nameZh:'天安门广场', nameKo:'천안문 광장',
+    chars:'장위 주활동권 · 마오쩌둥 연설대 · 백만 군중 집결', x:370, y:295,
+    desc:`베이징의 심장. 자금성 정문 앞으로 펼쳐진 44만 제곱미터의 광장이다. <strong>1966년 8월 18일, 마오쩌둥이 천안문 성루에 올라 100만 홍위병을 내려다보았다.</strong> 인민영웅기념비 주위로 붉은 깃발이 바람에 펄럭이고, 구호 소리가 광장을 가득 채운다.` },
+  { id:'beida', category:'core', no:'002', nameZh:'北京大学', nameKo:'북경대학교',
+    chars:'대자보 발원지 · 오기석 과거 근무지 · 홍위병 조직 거점', x:122, y:118,
+    desc:`중관촌 서쪽의 명문 대학. <strong>1966년 5월 25일, 철학과 강사 녜위안쯔가 이 교정 게시판에 중국 최초의 문혁 대자보를 붙였다.</strong> 마오쩌둥이 이를 '전국 최초의 마르크스-레닌주의 대자보'라 칭하며 전국 방송으로 낭독을 지시했다. 오기석이 한때 이 교정에서 연구했다.` },
+  { id:'wangfujing', category:'core', no:'003', nameZh:'王府井大街', nameKo:'왕부정 거리',
+    chars:'사구(四舊) 타파 주무대 · 서점·상점 약탈 현장', x:465, y:240,
+    desc:`베이징 최대 상업 거리. <strong>홍위병들이 간판을 모두 혁명적 이름으로 갈아치웠고, 책은 거리에 쏟아져 불태워졌다.</strong> 점원들이 단상 위로 끌려 올라갔다. 사구(四舊: 구사상·구문화·구풍속·구습관) 타파 운동의 첫 번째 전장이다.` },
+  { id:'hospital', category:'core', no:'004', nameZh:'人民医院', nameKo:'인민병원',
+    chars:'이화 근무지 · 전 계층 부상자 집결', x:249, y:168,
+    desc:`이화가 메스를 드는 곳. <strong>피 앞에서는 홍오류도 오흑류도 없다.</strong> 그러나 현실은 다르다. 당 간부가 병실 우선순위를 지시하고, 마오 어록이 처방전 위에 인용된다. 투쟁회에서 맞은 부상자, 홍위병의 습격에서 살아남은 사람들이 이곳으로 실려 온다.` },
+  { id:'opera', category:'core', no:'005', nameZh:'中央歌剧团', nameKo:'중앙 가극단',
+    chars:'서란 활동 무대 · 혁명 모범극 전용 · 이강 사교장', x:503, y:336,
+    desc:`전통 경극 대신 '혁명 모범극'만이 허용되는 무대. <strong>여기서 예술은 선전이고, 배우는 당의 메가폰이다.</strong> 서란은 이 무대에서 완전하다. 이강이 공연 후 관계자들과 사교를 나누는 장소이기도 하다.` },
+  { id:'station', category:'core', no:'006', nameZh:'北京站', nameKo:'베이징역',
+    chars:'소진 근무지 · 전국 홍위병 유입 · 하방 지식인 집결', x:522, y:278,
+    desc:`1959년 건설된 베이징의 관문. <strong>마오쩌둥이 전국 홍위병의 무임 기차 여행을 허용하면서 이 역이 혁명의 이동 경로가 되었다.</strong> 소진이 질서를 유지하려 하지만 기차 한 편에 수백 명의 홍위병이 쏟아진다. 반대 방향으로는 지식인들이 '하방' 열차에 강제 승차된다.` },
+
+  { id:'hotel', category:'cross', no:'007', nameZh:'北京饭店', nameKo:'베이징 호텔',
+    chars:'고위 간부·외교관 전용 · 하층은 서빙·오물수거로만 출입', x:474, y:268,
+    desc:`왕부정 인근의 최고급 호텔. 외교관과 고위 간부만이 정문을 통과한다. <strong>허무연은 이 건물 뒤편에서 오물을 수거한다.</strong> 로비에서는 프랑스어가 들리고, 뒷문에서는 빗자루 소리가 난다. 혁명이 평등을 선언한 나라에서 가장 불평등한 공간이다.` },
+  { id:'market', category:'cross', no:'008', nameZh:'东安市场', nameKo:'동안 시장',
+    chars:'과거 번화가 → 자본주의 퇴폐 상징 · 암시장·밀거래', x:455, y:218,
+    desc:`1903년부터 이어온 베이징 최대 실내 시장. 홍위병이 들이닥치기 전에는 서적, 골동품, 문방구가 가득했다. <strong>지금은 매대 절반이 비었고, 남은 것들은 혁명적이지 않다는 이유로 언제 압수될지 모른다.</strong> 뒤편 골목에는 서연추의 물감, 오기석의 메모지 같은 것들이 여전히 거래된다.` },
+  { id:'park', category:'cross', no:'009', nameZh:'北海公园', nameKo:'북해 공원',
+    chars:'밀회·접선 · 절망한 오흑류 방문', x:310, y:195,
+    desc:`자금성 서북쪽에 인접한 황실 공원. 백탑이 호수 위 섬에 서 있다. <strong>평일에는 거의 비어 있어 접선과 밀회의 장소가 된다.</strong> 오기석이 혼자 호수를 바라보며 계산을 계속한다. 밤의 이 공원은 북경에서 몇 안 되는 조용한 곳이다.` },
+  { id:'factory', category:'cross', no:'010', nameZh:'工厂配给所', nameKo:'공장 배급소',
+    chars:'노동자 조반파 거점 · 양표 소문·갈등 유통', x:165, y:300,
+    desc:`식량 배급표를 나눠주는 장소이자 조반파 노동자들의 비공식 집회 장소. <strong>누가 더 많은 배급을 받느냐가 혁명적 순수성의 척도가 된다.</strong> 소문이 가장 빠르게 도는 곳이다. 배급줄에서 오흑류는 마지막에 선다.` },
+  { id:'siheyuan', category:'cross', no:'011', nameZh:'四合院胡同', nameKo:'사합원 골목',
+    chars:'전통 주택가 · 가택 수색 타깃 · 백수련 거처', x:210, y:335,
+    desc:`베이징 전통 중정식 주택인 사합원이 밀집한 골목. 백수련이 가문의 저택을 빼앗긴 뒤 거처하는 좁은 방이 이 골목 어딘가에 있다. <strong>홍위병 가택 수색의 단골 표적이다.</strong> 새벽 문을 두드리는 소리가 나면 백수련은 허리를 더 곧게 세운다.` },
+
+  { id:'zhongnanhai', category:'power', no:'012', nameZh:'中南海', nameKo:'중남해',
+    chars:'최고 권력층 + 문혁소조 본부 · 접근 불가', x:274, y:250,
+    desc:`자금성 서쪽의 지도부 거주·집무 공간. 마오쩌둥, 저우언라이, 린뱌오가 이 안에 있다. <strong>문화대혁명 소조가 이곳에서 운동의 방향을 결정한다.</strong> 이강이 받는 지시의 출처. 일반인은 접근이 불가능하다.` },
+  { id:'police', category:'power', no:'013', nameZh:'公安局', nameKo:'공안국',
+    chars:'이강 감시망 · 장위 폭력 결합 · 오흑류 심문·구금', x:428, y:312,
+    desc:`홍위병의 폭력과 국가 공권력이 만나는 지점. <strong>이강이 감시망을 운영하는 곳이자 장위의 돌격대가 비공식적으로 협력하는 공간이다.</strong> 오흑류로 지목된 인물들이 이곳으로 연행된다. 공안과 홍위병의 경계가 점점 흐릿해지고 있다.` },
+  { id:'stadium', category:'power', no:'014', nameZh:'劳动者体育馆', nameKo:'노동자 체육관',
+    chars:'공개 투쟁회 현장 · 유가혜 등 자아비판 강요', x:556, y:168,
+    desc:`수천 명을 수용하는 체육관이 '투쟁회(批斗会)' 무대로 전환된다. <strong>단상에 오른 사람은 군중 앞에서 자신의 죄를 고백해야 한다.</strong> 유가혜가 이 단상에 섰다. 가장 아끼던 제자가 관중석에 앉아 있었다.` },
+
+  { id:'farm', category:'fluid', no:'015', nameZh:'郊外农场', nameKo:'교외 농장',
+    chars:'하방(下放) 예정지 · 육체노동 사상 개조', x:110, y:430,
+    desc:`도시 지식인들이 '재교육'을 위해 강제 이주되는 농촌 집단 농장. <strong>지식인이 농민·노동자와 함께 살며 부르주아 사상을 씻어내야 한다는 마오의 교시에서 비롯한다.</strong> 오기석이 이미 이곳을 거쳐 돌아왔다. 유가혜에게 다음 소환장이 올 것이다.` },
+  { id:'temple', category:'fluid', no:'016', nameZh:'废弃寺庙', nameKo:'폐사찰',
+    chars:'허무연 과거 거처 · 파괴 후 홍위병 임시 숙소·창고', x:96, y:71,
+    desc:`베이징 외곽의 버려진 사찰. 허무연이 있던 곳. <strong>홍위병이 들이닥쳐 불상을 부수고 경전을 태운 날, 허무연은 그 앞에 서 있었다.</strong> 지금은 홍위병 임시 숙소와 압수물 창고로 쓰인다. 연기에 그을린 벽, 뒤집힌 제단, 부서진 목탁.` }
+];
+
+/* ===== BGM ===== */
+const bgm = document.getElementById('bgm');
+const bgmBtn = document.getElementById('bgm-btn');
+const bgmPlayer = document.getElementById('bgm-player');
+
+function startBgm() {
+  bgm.volume = 0.35;
+  bgm.play().then(() => { bgmBtn.textContent = '❚❚'; }).catch(() => {});
+  bgmPlayer.classList.add('visible');
+}
+bgmBtn.addEventListener('click', function() {
+  if (bgm.paused) { bgm.play(); bgmBtn.textContent = '❚❚'; }
+  else { bgm.pause(); bgmBtn.textContent = '▶'; }
+});
+
+/* ===== ENTER ===== */
+document.getElementById('enter-btn').addEventListener('click', function() {
+  document.getElementById('splash').classList.add('hidden');
+  document.getElementById('main').classList.add('visible');
+  startBgm();
+});
+
+/* ===== NAV ===== */
+document.querySelectorAll('.landing-nav-item').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    showSection(this.dataset.section);
+  });
+});
+document.querySelectorAll('.js-back').forEach(function(btn) {
+  btn.addEventListener('click', showLanding);
+});
+
+function showSection(name) {
+  document.getElementById('landing').style.display = 'none';
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('section-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'persons' && !document.getElementById('grid-red').children.length) renderPersons();
+  if (name === 'places' && !document.getElementById('places-list-container').children.length) renderPlaces();
+}
+function showLanding() {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('landing').style.display = 'flex';
+  window.scrollTo(0, 0);
+}
+
+/* ===== PERSONS ===== */
+function renderPersons() {
+  var rg = document.getElementById('grid-red');
+  var bg = document.getElementById('grid-black');
+  PERSONS.forEach(function(p) {
+    var card = makeCard(p);
+    (p.faction === 'red' ? rg : bg).appendChild(card);
+  });
+}
+
+function makeCard(p) {
+  var div = document.createElement('div');
+  div.className = 'person-card' + (p.faction === 'black' ? ' black-class' : '');
+  div.innerHTML = '<div class="card-img-wrap">'
+    + '<img src="' + p.img + '" alt="' + p.nameKo + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+    + '<div class="card-img-placeholder" style="display:none">☆</div>'
+    + '</div>'
+    + '<div class="card-info">'
+    + '<div class="card-name-zh">' + p.nameZh + '</div>'
+    + '<div class="card-name-ko">' + p.nameKo + '</div>'
+    + '<div class="card-role">' + p.gender + ' · ' + p.age + '세 · ' + p.mbti + '<br>' + p.role.split('·')[0].trim() + '</div>'
+    + '</div>';
+  div.addEventListener('click', function() { openPerson(p.id); });
+  return div;
+}
+
+function openPerson(id) {
+  var p = PERSONS.find(function(x) { return x.id === id; });
+  if (!p) return;
+  var isBlack = p.faction === 'black';
+  var splitIdx = LOOKS[p.id] || 3;
+  var looks = p.appearance.slice(0, splitIdx);
+  var outfit = p.appearance.slice(splitIdx);
+
+  var rels = p.relations.map(function(r) {
+    return '<div class="relation-item"><span class="relation-name">' + r.name + '</span><span class="relation-desc">' + r.desc + '</span></div>';
+  }).join('');
+
+  var html = ''
+    + '<div class="detail-portrait-wrap">'
+    + '<img class="detail-portrait" src="' + p.img + '" alt="' + p.nameKo + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+    + '<div class="portrait-placeholder" style="display:none">☆</div>'
+    + '</div>'
+    + '<div class="detail-header-bar' + (isBlack ? ' black-class-header' : '') + '">'
+    + '<div><div class="detail-name-zh">' + p.nameZh + '</div><div class="detail-name-ko">' + p.nameKo + ' · ' + p.role + '</div></div>'
+    + '<button class="detail-close" id="detail-close-btn">✕</button>'
+    + '</div>'
+    + '<div class="detail-body">'
+    + '<div class="detail-meta">'
+    + '<div class="meta-cell"><span class="meta-label">성별·나이</span><span class="meta-value">' + p.gender + ' · ' + p.age + '</span></div>'
+    + '<div class="meta-cell"><span class="meta-label">MBTI</span><span class="meta-value">' + p.mbti + '</span></div>'
+    + '<div class="meta-cell"><span class="meta-label">에니어그램</span><span class="meta-value">' + p.enneagram + '</span></div>'
+    + '<div class="meta-cell"><span class="meta-label">성향</span><span class="meta-value">' + p.alignment + '</span></div>'
+    + '</div>'
+    + '<div class="detail-role-tag' + (isBlack ? ' black-class-tag' : '') + '">' + p.role + '</div>'
+    + '<div class="detail-appearance">'
+    + '<div class="appearance-group"><div class="appearance-group-label">외 형</div>' + looks.map(function(a){ return '<span class="appear-chip">'+a+'</span>'; }).join('') + '</div>'
+    + (outfit.length ? '<div class="appearance-group" style="margin-top:.5rem"><div class="appearance-group-label">복 장</div>' + outfit.map(function(a){ return '<span class="appear-chip">'+a+'</span>'; }).join('') + '</div>' : '')
+    + '</div>'
+    + '<div class="detail-rule"></div>'
+    + '<div class="detail-story">' + p.story + '</div>'
+    + '<div class="habit-section' + (isBlack ? ' black-class-habit' : '') + '"><div class="habit-title">버 릇</div><div class="habit-text">' + p.habit + '</div></div>'
+    + '<div class="detail-rule"></div>'
+    + '<div class="detail-relations"><div class="relations-title">인물 관계</div>' + rels + '</div>'
+    + '<div class="classified-section">'
+    + '<button class="classified-toggle" data-target="scales-' + p.id + '"><div class="classified-seal">⊠</div><span class="classified-label">기밀 — 역린 · 접근 제한</span><span class="classified-toggle-icon">▼</span></button>'
+    + '<div class="classified-content" id="scales-' + p.id + '"><div class="classified-text">' + p.scales + '</div></div>'
+    + '</div>'
+    + '<div class="classified-section">'
+    + '<button class="classified-toggle" data-target="void-' + p.id + '"><div class="classified-seal">⊠</div><span class="classified-label">기밀 — 결핍 · 접근 제한</span><span class="classified-toggle-icon">▼</span></button>'
+    + '<div class="classified-content" id="void-' + p.id + '"><div class="classified-text">' + p.void + '</div></div>'
+    + '</div>'
+    + '<div class="detail-file-no">档案 No. ' + p.no + ' · ' + (isBlack ? '五黑类 — 오흑류' : '红五类 — 홍오류') + ' · 1966 · 北京</div>'
+    + '</div>';
+
+  document.getElementById('detail-card-content').innerHTML = html;
+  document.getElementById('person-detail').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  document.getElementById('detail-close-btn').addEventListener('click', closePerson);
+  document.querySelectorAll('#detail-card-content .classified-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var cid = this.dataset.target;
+      var content = document.getElementById(cid);
+      var open = content.classList.toggle('open');
+      this.classList.toggle('open', open);
+      this.classList.toggle('revealed', open);
+    });
+  });
+}
+function closePerson() {
+  document.getElementById('person-detail').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('person-detail').addEventListener('click', function(e) {
+  if (e.target === this) closePerson();
+});
+
+/* ===== PLACES ===== */
+function renderPlaces() {
+  var svg = document.getElementById('mapPoints');
+
+  PLACES.forEach(function(pl) {
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'map-pt');
+
+    // pulse ring
+    var ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    ring.setAttribute('class', 'ring');
+    ring.setAttribute('cx', pl.x);
+    ring.setAttribute('cy', pl.y);
+    ring.setAttribute('r', '6');
+    ring.setAttribute('fill', 'none');
+    ring.setAttribute('stroke', CAT_COLOR[pl.category]);
+    ring.setAttribute('stroke-width', '1');
+    ring.setAttribute('opacity', '0.35');
+
+    // 애니메이션
+    var anim1 = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+    anim1.setAttribute('attributeName', 'r');
+    anim1.setAttribute('values', '6;13;6');
+    anim1.setAttribute('dur', '2.8s');
+    anim1.setAttribute('repeatCount', 'indefinite');
+    var anim2 = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+    anim2.setAttribute('attributeName', 'opacity');
+    anim2.setAttribute('values', '0.35;0;0.35');
+    anim2.setAttribute('dur', '2.8s');
+    anim2.setAttribute('repeatCount', 'indefinite');
+    ring.appendChild(anim1);
+    ring.appendChild(anim2);
+
+    // dot
+    var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', pl.x);
+    dot.setAttribute('cy', pl.y);
+    dot.setAttribute('r', '5');
+    dot.setAttribute('fill', CAT_COLOR[pl.category]);
+    dot.setAttribute('stroke', '#f0e8d8');
+    dot.setAttribute('stroke-width', '1.5');
+
+    // 클릭 영역 (더 넓게)
+    var hit = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    hit.setAttribute('cx', pl.x);
+    hit.setAttribute('cy', pl.y);
+    hit.setAttribute('r', '14');
+    hit.setAttribute('fill', 'transparent');
+    hit.setAttribute('style', 'cursor:pointer');
+
+    g.appendChild(ring);
+    g.appendChild(dot);
+    g.appendChild(hit);
+
+    // 클릭 이벤트는 hit circle에만
+    (function(place) {
+      hit.addEventListener('click', function(e) {
+        e.stopPropagation();
+        openMapPanel(place.id);
+      });
+    })(pl);
+
+    svg.appendChild(g);
+  });
+
+  // 목록
+  var container = document.getElementById('places-list-container');
+  ['core','cross','power','fluid'].forEach(function(cat) {
+    var places = PLACES.filter(function(p) { return p.category === cat; });
+    var sec = document.createElement('div');
+    sec.className = 'places-category';
+    sec.innerHTML = '<div class="places-category-label"><div class="category-dot" style="background:' + CAT_COLOR[cat] + '"></div>' + CAT_NAME[cat] + '</div><div class="places-list" id="plist-' + cat + '"></div>';
+    container.appendChild(sec);
+    var grid = document.getElementById('plist-' + cat);
+    places.forEach(function(pl) {
+      var div = document.createElement('div');
+      div.className = 'place-item';
+      div.innerHTML = '<div class="place-name-zh">' + pl.nameZh + '</div><div class="place-name-ko">' + pl.nameKo + '</div><div class="place-chars">' + pl.chars.split('·')[0].trim() + '</div>';
+      div.addEventListener('click', function() { openPlaceDetail(pl.id); });
+      grid.appendChild(div);
+    });
+  });
+}
+
+function openMapPanel(id) {
+  var pl = PLACES.find(function(x) { return x.id === id; });
+  if (!pl) return;
+  var panel = document.getElementById('map-panel');
+  document.getElementById('map-panel-content').innerHTML =
+    '<div style="margin-bottom:.5rem"><div style="font-family:\'Noto Serif SC\',serif;font-size:1.1rem;color:var(--red-dark);font-weight:700;letter-spacing:.05em">' + pl.nameZh + '</div>'
+    + '<div style="font-size:.65rem;color:var(--gray);letter-spacing:.15em;margin-top:.15rem">' + pl.nameKo + '</div></div>'
+    + '<div style="display:inline-block;padding:.2rem .6rem;font-size:.55rem;letter-spacing:.15em;margin-bottom:.8rem;border:1px solid ' + CAT_COLOR[pl.category] + ';color:' + CAT_COLOR[pl.category] + '">' + CAT_NAME[pl.category] + '</div>'
+    + '<div style="font-size:.6rem;color:var(--gray-light);letter-spacing:.08em;margin-bottom:.8rem;line-height:1.8">' + pl.chars + '</div>'
+    + '<div style="height:1px;background:var(--paper-aged);margin-bottom:.8rem"></div>'
+    + '<div style="font-size:.78rem;line-height:1.9;color:var(--ink);letter-spacing:.03em">' + pl.desc + '</div>'
+    + '<div style="margin-top:.8rem;font-size:.55rem;color:var(--gray-light);letter-spacing:.15em;text-align:right">场所 No. ' + pl.no + ' · 北京 1966</div>';
+  panel.classList.add('open');
+}
+
+document.getElementById('map-panel-close').addEventListener('click', function() {
+  document.getElementById('map-panel').classList.remove('open');
+});
+
+function openPlaceDetail(id) {
+  var pl = PLACES.find(function(x) { return x.id === id; });
+  if (!pl) return;
+  document.getElementById('place-detail-content').innerHTML =
+    '<div style="background:var(--paper);max-width:560px;width:calc(100% - 2rem);margin:3rem auto;padding:2rem">'
+    + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem">'
+    + '<div><div style="font-family:\'Noto Serif SC\',serif;font-size:1.6rem;color:var(--red-dark);font-weight:700;letter-spacing:.05em">' + pl.nameZh + '</div>'
+    + '<div style="font-size:.7rem;color:var(--gray);letter-spacing:.15em;margin-top:.2rem">' + pl.nameKo + '</div></div>'
+    + '<button id="place-close-btn" style="background:none;border:none;color:var(--gray-light);font-size:1.2rem;cursor:pointer">✕</button>'
+    + '</div>'
+    + '<div style="display:inline-block;padding:.25rem .7rem;font-size:.6rem;letter-spacing:.15em;margin-bottom:1rem;border:1px solid ' + CAT_COLOR[pl.category] + ';color:' + CAT_COLOR[pl.category] + '">' + CAT_NAME[pl.category] + '</div>'
+    + '<div style="font-size:.65rem;color:var(--gray-light);letter-spacing:.1em;margin-bottom:1rem;line-height:1.8">' + pl.chars + '</div>'
+    + '<div style="height:1px;background:var(--paper-aged);margin-bottom:1rem"></div>'
+    + '<div style="font-size:.85rem;line-height:2;color:var(--ink);letter-spacing:.04em">' + pl.desc + '</div>'
+    + '<div style="margin-top:.8rem;font-size:.6rem;color:var(--gray-light);letter-spacing:.15em;text-align:right">场所 No. ' + pl.no + ' · ' + CAT_NAME[pl.category] + ' · 北京 1966</div>'
+    + '</div>';
+  document.getElementById('place-detail').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('place-close-btn').addEventListener('click', closePlaceDetail);
+}
+function closePlaceDetail() {
+  document.getElementById('place-detail').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('place-detail').addEventListener('click', function(e) {
+  if (e.target === this) closePlaceDetail();
+});
+
+})();
+</script>
+</body>
+</html>
