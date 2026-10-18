@@ -575,6 +575,23 @@ svg.map-svg{width:100%;display:block;cursor:default;border:1px solid var(--paper
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 
+
+/* 음성 기록 */
+.voice-rec{margin:-.4rem 0 1.4rem}
+.voice-btn{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--f-ko);font-weight:700;font-size:.85rem;letter-spacing:.1em;background:var(--paper-2);border:1px solid var(--ink);color:var(--ink);padding:.45rem .95rem .45rem .7rem;cursor:pointer;box-shadow:2px 2px 0 var(--ink);transition:transform .1s,box-shadow .1s,background .12s,color .12s}
+.voice-btn:hover{background:var(--ink);color:var(--paper)}
+.voice-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+.voice-btn .reel{width:18px;height:18px;border-radius:50%;flex-shrink:0;border:1.5px solid currentColor;position:relative}
+.voice-btn .reel::before{content:'';position:absolute;inset:4px;border-radius:50%;border:1.5px dotted currentColor}
+.voice-btn.playing{background:var(--red);border-color:var(--red);color:var(--paper)}
+.voice-btn.playing .reel{animation:reel 1.1s linear infinite}
+@keyframes reel{to{transform:rotate(360deg)}}
+.voice-btn .vk{font-family:var(--f-zh);font-weight:400;font-size:.72rem;opacity:.6}
+.voice-slip{display:none;margin-top:.8rem;background:var(--photo);border:1px solid var(--paper-aged);border-left:3px solid var(--red);padding:.7rem .95rem .75rem;box-shadow:0 2px 6px rgba(60,35,10,.12);animation:fade-in .25s ease}
+.voice-slip.show{display:block}
+.voice-slip .vl{font-size:.68rem;letter-spacing:.2em;color:var(--red-dark);font-weight:700;margin-bottom:.35rem}
+.voice-slip .vzh{font-family:var(--f-zh);font-size:1.05rem;line-height:1.7;color:var(--ink)}
+.voice-slip .vko{font-size:.9rem;line-height:1.75;color:var(--gray);margin-top:.25rem}
 </style>
 </head>
 <body>
@@ -582,6 +599,7 @@ svg.map-svg{width:100%;display:block;cursor:default;border:1px solid var(--paper
 <audio id="bgm" loop preload="auto">
   <source src="https://raw.githubusercontent.com/68ol/66site/refs/heads/main/%EC%A4%91%EA%B5%AD.mp3" type="audio/mpeg">
 </audio>
+<audio id="voice-player" preload="none"></audio>
 
 <div id="bgm-player">
   <div class="bgm-label">二胡 · 静響</div>
@@ -1076,6 +1094,53 @@ bgmBtn.addEventListener('click', function() {
   else { bgm.pause(); bgmBtn.textContent = '▶'; }
 });
 
+
+/* ===== VOICE ===== */
+var VOICE_BASE = 'https://raw.githubusercontent.com/68ol/66site/refs/heads/main/voice/';
+var VOICES = {
+  'zhang-wei': { f:['장위 기본','장위 애칭'],
+    s:['怎么，不服气啊？有胆子就当着我的面再说一遍！','왜, 불만 있어? 배짱 있으면 내 앞에서 다시 한번 말해 봐!'],
+    n:['小傻瓜，躲什么？过来，我又不会吃了你。','우리 바보, 뭘 그렇게 피해? 이리 와. 내가 잡아먹기라도 하냐?'] },
+  'xu-lan': { f:['서란 기본','서란 애칭'],
+    s:['哎呀，别这么看着我嘛！怎么，没见过大明星呀？','아이참, 그렇게 쳐다보지 마~! 왜, 대스타 처음 봐?'],
+    n:['小冤家，你怎么这么会折腾人呀？害得我连台词都记不住了。','이 못된 사람아, 어쩜 이렇게 사람 마음을 들었다 놨다 해? 당신 때문에 대사도 못 외우겠잖아.'] }
+};
+var vPlayer = document.getElementById('voice-player');
+vPlayer.volume = 0.6;
+var vBtn = null, vBgmVol = null;
+function vRestore(){ if (vBgmVol !== null) { bgm.volume = vBgmVol; vBgmVol = null; } }
+function vClear(){ if (vBtn) vBtn.classList.remove('playing'); vBtn = null; }
+function stopVoice(){ if (!vPlayer.paused) vPlayer.pause(); vClear(); vRestore(); }
+vPlayer.addEventListener('ended', function(){ vClear(); vRestore(); });
+vPlayer.addEventListener('error', function(){ vClear(); vRestore(); });
+function voiceBlock(id){
+  if (!VOICES[id]) return '';
+  return '<div class="voice-rec"><button type="button" class="voice-btn" data-voice="' + id + '" data-step="0"><span class="reel" aria-hidden="true"></span><span class="vt">목소리</span><span class="vk">声音</span></button>'
+    + '<div class="voice-slip" aria-live="polite"><div class="vl"></div><div class="vzh" lang="zh"></div><div class="vko"></div></div></div>';
+}
+function bindVoice(root){
+  var btn = root.querySelector('.voice-btn'); if (!btn) return;
+  var d = VOICES[btn.dataset.voice];
+  var slip = root.querySelector('.voice-slip');
+  btn.addEventListener('click', function(){
+    var step = +btn.dataset.step;
+    var line = step === 0 ? d.s : d.n;
+    stopVoice();
+    vPlayer.src = VOICE_BASE + encodeURIComponent(d.f[step] + '.mp3');
+    if (!bgm.paused) { vBgmVol = bgm.volume; bgm.volume = Math.min(bgm.volume, 0.1); }
+    vPlayer.play().catch(function(){ vClear(); vRestore(); });
+    vBtn = btn; btn.classList.add('playing');
+    slip.querySelector('.vl').textContent = step === 0 ? '录音 · 목소리' : '录音 · 애칭';
+    slip.querySelector('.vzh').textContent = line[0];
+    slip.querySelector('.vko').textContent = line[1];
+    slip.classList.add('show');
+    var next = step === 0 ? 1 : 0;
+    btn.dataset.step = next;
+    btn.querySelector('.vt').textContent = next === 0 ? '목소리' : '애칭';
+    btn.querySelector('.vk').textContent = next === 0 ? '声音' : '昵称';
+  });
+}
+
 /* ===== ENTER ===== */
 document.getElementById('enter-btn').addEventListener('click', function() {
   document.getElementById('splash').classList.add('hidden');
@@ -1162,6 +1227,7 @@ function openPerson(id) {
     + '<div class="meta-cell"><span class="meta-label">성향</span><span class="meta-value">' + p.alignment + '</span></div>'
     + '</div>'
     + '<div class="detail-role-tag' + (isBlack ? ' black-class-tag' : '') + '">' + p.role + '</div>'
+    + voiceBlock(p.id)
     + '<div class="detail-appearance">'
     + '<div class="appearance-group"><div class="appearance-group-label">외 형</div>' + looks.map(function(a){ return '<span class="appear-chip">'+a+'</span>'; }).join('') + '</div>'
     + (outfit.length ? '<div class="appearance-group" style="margin-top:.5rem"><div class="appearance-group-label">복 장</div>' + outfit.map(function(a){ return '<span class="appear-chip">'+a+'</span>'; }).join('') + '</div>' : '')
@@ -1187,6 +1253,8 @@ function openPerson(id) {
   document.body.style.overflow = 'hidden';
 
   document.getElementById('detail-close-btn').addEventListener('click', closePerson);
+  stopVoice();
+  bindVoice(document.getElementById('detail-card-content'));
   document.querySelectorAll('#detail-card-content .classified-toggle').forEach(function(btn) {
     btn.addEventListener('click', function() {
       var cid = this.dataset.target;
@@ -1198,6 +1266,7 @@ function openPerson(id) {
   });
 }
 function closePerson() {
+  stopVoice();
   document.getElementById('person-detail').classList.remove('open');
   document.body.style.overflow = '';
 }
