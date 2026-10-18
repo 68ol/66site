@@ -1190,8 +1190,8 @@ function makeCard(p) {
     + '<div class="card-img-placeholder" style="display:none">☆</div>'
     + '</div>'
     + '<div class="card-info">'
-    + '<div class="card-name-zh">' + p.nameZh + '</div>'
-    + '<div class="card-name-ko">' + p.nameKo + '</div>'
+    + '<div class="card-name-zh" lang="ko">' + p.nameKo + '</div>'
+    + '<div class="card-name-ko" lang="zh">' + p.nameZh + '</div>'
     + '<div class="card-role">' + p.gender + ' · ' + p.age + '세 · ' + p.mbti + '<br>' + p.role.split('·')[0].trim() + '</div>'
     + '</div>';
   div.addEventListener('click', function() { openPerson(p.id); });
@@ -1216,7 +1216,7 @@ function openPerson(id) {
     + '<div class="portrait-placeholder" style="display:none">☆</div>'
     + '</div>'
     + '<div class="detail-header-bar' + (isBlack ? ' black-class-header' : '') + '">'
-    + '<div><div class="detail-name-zh">' + p.nameZh + '</div><div class="detail-name-ko">' + p.nameKo + ' · ' + p.role + '</div></div>'
+    + '<div><div class="detail-name-zh" lang="ko">' + p.nameKo + '</div><div class="detail-name-ko"><span lang="zh">' + p.nameZh + '</span> · ' + p.role + '</div></div>'
     + '<button class="detail-close" id="detail-close-btn">✕</button>'
     + '</div>'
     + '<div class="detail-body">'
